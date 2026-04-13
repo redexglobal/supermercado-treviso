@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Supermercado Treviso — Painel de Preços</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&display=swap');
+
+  :root {
+    --azul-escuro:   #071529;
+    --azul:          #1056A8;
+    --azul-medio:    #1565C0;
+    --azul-claro:    #1E88E5;
+    --dourado:       #FFD700;
+    --dourado-esc:   #C8A400;
+    --branco:        #FFFFFF;
+    --branco-soft:   rgba(255,255,255,0.85);
+    --branco-muted:  rgba(255,255,255,0.55);
+    --destaque-bg:   rgba(255,215,0,0.12);
+    --border-gold:   rgba(255,215,0,0.4);
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  html, body {
+    width:100%; height:100%;
+    overflow:hidden;
+    background: var(--azul-escuro);
+    font-family: 'Montserrat', sans-serif;
+    color: var(--branco);
+  }
+
+  /* LAYOUT PRINCIPAL */
+  .painel {
+    display: grid;
+    grid-template-columns: 50% 50%;
+    height: 100vh;
+    width: 100vw;
+  }
+
+  /* COLUNA ESQUERDA */
+  .col-esquerda {
+    display: grid;
+    grid-template-rows: 55% 45%;
+    height: 100vh;
+    border-right: 2px solid var(--border-gold);
+  }
+
+  /* TOPO ESQUERDO: Imagem do Produto */
+  .bloco-produto {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: radial-gradient(ellipse at center, #0d2847 0%, var(--azul-escuro) 70%);
+    overflow: hidden;
+    border-bottom: 2px solid var(--border-gold);
+    padding: 1rem;
+  }
+
+  .bloco-produto::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 50% 50%, rgba(255,215,0,0.06) 0%, transparent 65%);
+  }
+
+  .produto-img-wrap {
+    position: relative;
+    z-index: 2;
+  }
+
+  .produto-img {
+    width: 300px;
+    height: 300px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 4px solid var(--dourado);
+    box-shadow: 0 0 40px rgba(255,215,0,0.35), 0 0 80px rgba(255,215,0,0.12);
+    animation: flutuar 3.5s ease-in-out infinite, brilhar 4s ease-in-out infinite;
+    display: block;
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+
+  .produto-img.saindo {
+    opacity: 0;
+    transform: scale(0.85) rotate(15deg);
+  }
+
+  .produto-nome-badge {
+    position: absolute;
+    bottom: -18px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--dourado);
+    color: #000;
+    font-size: 0.9rem;
+    font-weight: 900;
+    padding: 0.35rem 1.5rem;
+    border-radius: 50px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    white-space: nowrap;
+    box-shadow: 0 4px 16px rgba(255,215,0,0.4);
+    z-index: 3;
+  }
+
+  /* RODAPE ESQUERDO: Logo + Relogio */
+  .bloco-marca {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.55rem;
+    padding: 1rem;
+    background: linear-gradient(180deg, var(--azul-escuro) 0%, #040e1e 100%);
+    position: relative;
+  }
+
+  .bloco-marca::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 10%; right: 10%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--dourado), transparent);
+  }
+
+  .logo-img {
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 12px;
+    border: 2px solid var(--border-gold);
+    box-shadow: 0 4px 20px rgba(255,215,0,0.2);
+  }
+
+  .slogan {
+    font-size: 0.68rem;
+    color: var(--dourado);
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    text-align: center;
+  }
+
+  .localizacao {
+    font-size: 0.72rem;
+    color: var(--branco-muted);
+    text-align: center;
+    font-weight: 500;
+  }
+
+  .relogio {
+    font-size: 2.2rem;
+    font-weight: 900;
+    color: var(--dourado);
+    letter-spacing: 4px;
+    text-shadow: 0 0 20px rgba(255,215,0,0.5);
+    line-height: 1;
+  }
+
+  .data-texto {
+    font-size: 0.75rem;
+    color: var(--branco-soft);
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: capitalize;
+    text-align: center;
+  }
+
+  /* COLUNA DIREITA: Lista de Precos */
+  .col-direita {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    overflow: hidden;
+    padding: 1.4rem 1.6rem;
+    background: linear-gradient(180deg, #0a1e3d 0%, var(--azul-escuro) 100%);
+  }
+
+  /* Cabecalho destaque */
+  .destaque-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    background: var(--destaque-bg);
+    border: 2px solid var(--border-gold);
+    border-radius: 16px;
+    padding: 1rem 1.4rem;
+    margin-bottom: 0.9rem;
+    flex-shrink: 0;
+  }
+
+  .destaque-emoji { font-size: 2.4rem; line-height: 1; }
+
+  .destaque-info { flex: 1; }
+
+  .destaque-titulo {
+    font-size: 1.5rem;
+    font-weight: 900;
+    color: var(--dourado);
+    letter-spacing: 1px;
+    line-height: 1;
+    text-transform: uppercase;
+  }
+
+  .destaque-sub {
+    font-size: 0.68rem;
+    color: var(--branco-muted);
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-top: 0.15rem;
+  }
+
+  .destaque-badge {
+    background: var(--dourado);
+    color: #000;
+    font-size: 0.62rem;
+    font-weight: 900;
+    padding: 0.3rem 0.8rem;
+    border-radius: 50px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    animation: piscar 2s ease-in-out infinite;
+    white-space: nowrap;
+  }
+
+  /* Cortes do produto em destaque */
+  .destaque-cortes {
+    display: flex;
+    flex-direction: column;
+    gap: 0.42rem;
+    margin-bottom: 0.7rem;
+    flex-shrink: 0;
+  }
+
+  .corte-destaque {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(255,255,255,0.05);
+    border-left: 3px solid var(--dourado);
+    border-radius: 0 10px 10px 0;
+    padding: 0.55rem 1rem;
+  }
+
+  .corte-nome {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--branco-soft);
+  }
+
+  .corte-preco {
+    font-size: 1.05rem;
+    font-weight: 900;
+    color: var(--dourado);
+    letter-spacing: 0.5px;
+  }
+
+  /* Divisor */
+  .divisor {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    margin: 0.4rem 0;
+    flex-shrink: 0;
+  }
+
+  .divisor-linha { flex: 1; height: 1px; background: var(--border-gold); }
+
+  .divisor-texto {
+    font-size: 0.6rem;
+    font-weight: 800;
+    color: var(--branco-muted);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  /* Outros produtos */
+  .outros-lista {
+    display: flex;
+    flex-direction: column;
+    gap: 0.32rem;
+    overflow-y: auto;
+    flex: 1;
+  }
+
+  .outros-lista::-webkit-scrollbar { width: 3px; }
+  .outros-lista::-webkit-scrollbar-thumb { background: var(--border-gold); border-radius: 3px; }
+
+  .outro-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.45rem 0.8rem;
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.06);
+    gap: 0.5rem;
+  }
+
+  .outro-esquerda {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .outro-emoji { font-size: 1.05rem; flex-shrink: 0; }
+
+  .outro-info { min-width: 0; }
+
+  .outro-categoria {
+    font-size: 0.65rem;
+    font-weight: 800;
+    color: var(--azul-claro);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    display: block;
+  }
+
+  .outro-corte {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--branco-soft);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: block;
+  }
+
+  .outro-preco {
+    font-size: 0.95rem;
+    font-weight: 900;
+    color: var(--branco);
+    flex-shrink: 0;
+  }
+
+  /* ANIMACOES */
+  @keyframes flutuar {
+    0%, 100% { transform: translateY(0px); }
+    40%       { transform: translateY(-16px); }
+    70%       { transform: translateY(8px); }
+  }
+
+  @keyframes brilhar {
+    0%, 100% { box-shadow: 0 0 40px rgba(255,215,0,0.35), 0 0 80px rgba(255,215,0,0.12); }
+    50%       { box-shadow: 0 0 60px rgba(255,215,0,0.6), 0 0 120px rgba(255,215,0,0.2); }
+  }
+
+  @keyframes piscar {
+    0%, 100% { opacity: 1; }
+    50%       { opacity: 0.55; }
+  }
+
+  @keyframes fade-in {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .fade-in { animation: fade-in 0.45s ease forwards; }
+</style>
+</head>
+<body>
+
+<div class="painel">
+
+  <!-- COLUNA ESQUERDA -->
+  <div class="col-esquerda">
+
+    <div class="bloco-produto">
+      <div class="produto-img-wrap">
+        <img id="produto-img" class="produto-img" src="images/produto1.jpg" alt="Produto" />
+        <div id="produto-nome-badge" class="produto-nome-badge">Frango</div>
+      </div>
+    </div>
+
+    <div class="bloco-marca">
+      <img src="images/logo.jpg" alt="Treviso" class="logo-img" />
+      <div class="slogan">Da Nossa Família, Para a Sua</div>
+      <div class="localizacao" id="localizacao">📍 Goiânia, GO</div>
+      <div class="relogio" id="relogio">00:00:00</div>
+      <div class="data-texto" id="data-texto">—</div>
+    </div>
+
+  </div>
+
+  <!-- COLUNA DIREITA -->
+  <div class="col-direita">
+
+    <div class="destaque-header">
+      <div class="destaque-emoji" id="dest-emoji">🐔</div>
+      <div class="destaque-info">
+        <div class="destaque-titulo" id="dest-titulo">Frango</div>
+        <div class="destaque-sub">Cortes frescos do dia</div>
+      </div>
+      <div class="destaque-badge">⭐ DESTAQUE</div>
+    </div>
+
+    <div class="destaque-cortes" id="dest-cortes"></div>
+
+    <div class="divisor">
+      <div class="divisor-linha"></div>
+      <div class="divisor-texto">Outros cortes disponíveis</div>
+      <div class="divisor-linha"></div>
+    </div>
+
+    <div class="outros-lista" id="outros-lista"></div>
+
+  </div>
+</div>
+
+<script>
+// ================================================================
+//  EDITE AQUI OS PRECOS — so mude o valor em "preco" e salve!
+// ================================================================
+
+const LOJA = {
+  nome: "Supermercado Treviso",
+  endereco: "Goiania, GO",
+};
+
+const PRODUTOS = [
+  {
+    nome: "Frango",
+    emoji: "🐔",
+    imagem: "images/produto1.jpg",
+    cortes: [
+      { nome: "Peito de Frango",     preco: "R$ 00,00/kg" },
+      { nome: "Coxa e Sobrecoxa",    preco: "R$ 00,00/kg" },
+      { nome: "Asa de Frango",       preco: "R$ 00,00/kg" },
+      { nome: "Frango Inteiro",      preco: "R$ 00,00/kg" },
+    ],
+  },
+  {
+    nome: "Linguica",
+    emoji: "🌭",
+    imagem: "images/produto2.jpg",
+    cortes: [
+      { nome: "Linguica Toscana",    preco: "R$ 00,00/kg" },
+      { nome: "Linguica Calabresa",  preco: "R$ 00,00/kg" },
+      { nome: "Linguica de Frango",  preco: "R$ 00,00/kg" },
+    ],
+  },
+  {
+    nome: "Carne de Porco",
+    emoji: "🐷",
+    imagem: "images/produto4.jpg",
+    cortes: [
+      { nome: "Costelinha Suina",    preco: "R$ 00,00/kg" },
+      { nome: "Lombo Suino",         preco: "R$ 00,00/kg" },
+      { nome: "Bisteca Suina",       preco: "R$ 00,00/kg" },
+    ],
+  },
+  {
+    nome: "Carne de Primeira",
+    emoji: "🥩",
+    imagem: "images/produto1.jpg",
+    cortes: [
+      { nome: "Alcatra",             preco: "R$ 00,00/kg" },
+      { nome: "Contrafile",          preco: "R$ 00,00/kg" },
+      { nome: "File Mignon",         preco: "R$ 00,00/kg" },
+      { nome: "Patinho",             preco: "R$ 00,00/kg" },
+    ],
+  },
+  {
+    nome: "Carne de Segunda",
+    emoji: "🍖",
+    imagem: "images/produto2.jpg",
+    cortes: [
+      { nome: "Coxao Mole",          preco: "R$ 00,00/kg" },
+      { nome: "Coxao Duro",          preco: "R$ 00,00/kg" },
+      { nome: "Acem",                preco: "R$ 00,00/kg" },
+      { nome: "Musculo",             preco: "R$ 00,00/kg" },
+    ],
+  },
+  {
+    nome: "Picanha",
+    emoji: "🔥",
+    imagem: "images/produto4.jpg",
+    cortes: [
+      { nome: "Picanha Bovina",      preco: "R$ 00,00/kg" },
+      { nome: "Picanha Suina",       preco: "R$ 00,00/kg" },
+    ],
+  },
+  {
+    nome: "Costela",
+    emoji: "🦴",
+    imagem: "images/produto1.jpg",
+    cortes: [
+      { nome: "Costela Bovina",      preco: "R$ 00,00/kg" },
+      { nome: "Costela Minga",       preco: "R$ 00,00/kg" },
+      { nome: "Costela Ripa",        preco: "R$ 00,00/kg" },
+    ],
+  },
+];
+
+// ================================================================
+//  LOGICA DO PAINEL — nao precisa editar abaixo
+// ================================================================
+
+let produtoAtual = 0;
+
+function renderProduto(idx) {
+  const p = PRODUTOS[idx];
+
+  const img = document.getElementById("produto-img");
+  const badge = document.getElementById("produto-nome-badge");
+  img.classList.add("saindo");
+  setTimeout(function() {
+    img.src = p.imagem;
+    img.classList.remove("saindo");
+    badge.textContent = p.nome;
+  }, 600);
+
+  document.getElementById("dest-emoji").textContent = p.emoji;
+  document.getElementById("dest-titulo").textContent = p.nome.toUpperCase();
+
+  var destCortes = document.getElementById("dest-cortes");
+  destCortes.innerHTML = "";
+  p.cortes.forEach(function(c) {
+    var el = document.createElement("div");
+    el.className = "corte-destaque fade-in";
+    el.innerHTML = '<span class="corte-nome">' + c.nome + '</span><span class="corte-preco">' + c.preco + '</span>';
+    destCortes.appendChild(el);
+  });
+
+  var outrosList = document.getElementById("outros-lista");
+  outrosList.innerHTML = "";
+  PRODUTOS.forEach(function(op, i) {
+    if (i === idx) return;
+    op.cortes.forEach(function(c) {
+      var el = document.createElement("div");
+      el.className = "outro-item fade-in";
+      el.innerHTML = '<div class="outro-esquerda"><span class="outro-emoji">' + op.emoji + '</span><div class="outro-info"><span class="outro-categoria">' + op.nome + '</span><span class="outro-corte">' + c.nome + '</span></div></div><span class="outro-preco">' + c.preco + '</span>';
+      outrosList.appendChild(el);
+    });
+  });
+}
+
+function atualizarRelogio() {
+  var agora = new Date();
+  var h = String(agora.getHours()).padStart(2,"0");
+  var m = String(agora.getMinutes()).padStart(2,"0");
+  var s = String(agora.getSeconds()).padStart(2,"0");
+  document.getElementById("relogio").textContent = h + ":" + m + ":" + s;
+
+  var dias  = ["domingo","segunda-feira","terca-feira","quarta-feira","quinta-feira","sexta-feira","sabado"];
+  var meses = ["jan","fev","mar","abr","mai","jun","jul","ago","set","out","nov","dez"];
+  var diaSem = dias[agora.getDay()];
+  var dia    = String(agora.getDate()).padStart(2,"0");
+  var mes    = meses[agora.getMonth()];
+  var ano    = agora.getFullYear();
+  document.getElementById("data-texto").textContent = diaSem + ", " + dia + " de " + mes + ". de " + ano;
+  document.getElementById("localizacao").textContent = "📍 " + LOJA.endereco;
+}
+
+renderProduto(0);
+atualizarRelogio();
+setInterval(atualizarRelogio, 1000);
+setInterval(function() {
+  produtoAtual = (produtoAtual + 1) % PRODUTOS.length;
+  renderProduto(produtoAtual);
+}, 9000);
+</script>
+
+</body>
+</html>
