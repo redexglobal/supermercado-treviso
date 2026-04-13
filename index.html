@@ -203,6 +203,11 @@
 </div>
 
 <script>
+// Protecao de acesso — redireciona para login se nao autenticado
+if(sessionStorage.getItem("trevizo_auth") !== "ok"){
+  window.location.replace("login.html");
+}
+
 var P=[
   {nome:"Frango",          img:"images/frango.jpg",
    c:[{n:"Coxa e Sobrecoxa Temperada",p:"R$ 18,99/kg"},{n:"Coxinha Temperada",p:"R$ 26,99/kg"},

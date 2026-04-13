@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Acesso Restrito - Trevizo</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&display=swap');
+  :root{--azul:#0D47C8;--azul-esc:#021a5e;--dourado:#FFD700;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html,body{width:100%;height:100%;font-family:'Montserrat',sans-serif;
+    background:linear-gradient(135deg,#021a5e 0%,#0D47C8 100%);
+    display:flex;align-items:center;justify-content:center;overflow:hidden;}
+
+  /* Círculos decorativos */
+  body::before{content:'';position:fixed;top:-120px;right:-120px;
+    width:420px;height:420px;border-radius:50%;
+    border:60px solid rgba(255,255,255,0.04);pointer-events:none;}
+  body::after{content:'';position:fixed;bottom:-100px;left:-100px;
+    width:340px;height:340px;border-radius:50%;
+    border:50px solid rgba(255,255,255,0.04);pointer-events:none;}
+
+  .card{background:rgba(255,255,255,0.07);border:1px solid rgba(255,215,0,0.35);
+    border-radius:22px;padding:3rem 2.8rem 2.6rem;width:100%;max-width:400px;
+    backdrop-filter:blur(12px);box-shadow:0 24px 60px rgba(0,0,0,0.4);
+    position:relative;z-index:1;animation:aparecer 0.5s ease forwards;}
+  @keyframes aparecer{from{opacity:0;transform:translateY(24px);}to{opacity:1;transform:translateY(0);}}
+
+  .logo-area{text-align:center;margin-bottom:2rem;}
+  .logo-area img{width:88px;height:88px;object-fit:contain;border-radius:14px;
+    box-shadow:0 8px 24px rgba(0,0,0,0.4);margin-bottom:1rem;}
+  .logo-area .marca{font-size:1.7rem;font-weight:900;color:#fff;letter-spacing:3px;
+    text-transform:uppercase;text-shadow:0 0 20px rgba(255,215,0,0.4);}
+  .logo-area .marca span{color:var(--dourado);}
+  .logo-area .sub{font-size:0.62rem;font-weight:700;color:rgba(255,255,255,0.5);
+    letter-spacing:2px;text-transform:uppercase;margin-top:0.3rem;}
+
+  .separador{height:1px;background:linear-gradient(90deg,transparent,var(--dourado),transparent);
+    margin-bottom:2rem;}
+
+  .campo{margin-bottom:1.2rem;}
+  .campo label{display:block;font-size:0.65rem;font-weight:800;color:var(--dourado);
+    letter-spacing:2px;text-transform:uppercase;margin-bottom:0.5rem;}
+  .campo input{width:100%;padding:0.85rem 1.1rem;border-radius:10px;border:none;
+    background:rgba(255,255,255,0.1);color:#fff;font-family:'Montserrat',sans-serif;
+    font-size:0.95rem;font-weight:600;outline:none;
+    border:1px solid rgba(255,255,255,0.2);transition:border 0.2s,background 0.2s;}
+  .campo input::placeholder{color:rgba(255,255,255,0.35);font-weight:400;}
+  .campo input:focus{border-color:var(--dourado);background:rgba(255,255,255,0.15);}
+
+  .btn{width:100%;padding:1rem;margin-top:0.5rem;border:none;border-radius:12px;
+    background:var(--dourado);color:#000;font-family:'Montserrat',sans-serif;
+    font-size:1rem;font-weight:900;letter-spacing:2px;text-transform:uppercase;
+    cursor:pointer;transition:transform 0.15s,box-shadow 0.15s;
+    box-shadow:0 6px 20px rgba(255,215,0,0.35);}
+  .btn:hover{transform:translateY(-2px);box-shadow:0 10px 28px rgba(255,215,0,0.5);}
+  .btn:active{transform:translateY(0);}
+
+  .erro{display:none;text-align:center;color:#ff6b6b;font-size:0.75rem;
+    font-weight:700;letter-spacing:1px;margin-top:1rem;
+    background:rgba(255,80,80,0.12);padding:0.6rem;border-radius:8px;
+    border:1px solid rgba(255,80,80,0.25);}
+  .erro.visivel{display:block;animation:shake 0.35s ease;}
+  @keyframes shake{0%,100%{transform:translateX(0);}25%{transform:translateX(-6px);}75%{transform:translateX(6px);}}
+
+  .rodape{text-align:center;margin-top:1.5rem;font-size:0.55rem;
+    color:rgba(255,255,255,0.3);letter-spacing:1px;text-transform:uppercase;}
+</style>
+</head>
+<body>
+
+<div class="card">
+  <div class="logo-area">
+    <img src="images/logo.jpg" alt="Trevizo" onerror="this.style.display='none'"/>
+    <div class="marca">TREVIZO <span>27</span></div>
+    <div class="sub">Painel de Precos — Acesso Restrito</div>
+  </div>
+
+  <div class="separador"></div>
+
+  <form id="form-login" onsubmit="entrar(event)">
+    <div class="campo">
+      <label>Usuario</label>
+      <input type="text" id="usuario" placeholder="Digite seu usuario" autocomplete="username" autofocus/>
+    </div>
+    <div class="campo">
+      <label>Senha</label>
+      <input type="password" id="senha" placeholder="Digite sua senha" autocomplete="current-password"/>
+    </div>
+    <button type="submit" class="btn">Entrar no Painel</button>
+    <div class="erro" id="erro-msg">Usuario ou senha incorretos</div>
+  </form>
+
+  <div class="rodape">Sistema por Redex Global &nbsp;|&nbsp; Trevizo &copy; 2024</div>
+</div>
+
+<script>
+// Credenciais — altere aqui se necessario
+var USUARIOS = [
+  {user: "admin",   senha: "trevizo27"},
+  {user: "trevizo", senha: "acougue2024"}
+];
+
+// Se ja esta logado, vai direto ao painel
+if(sessionStorage.getItem("trevizo_auth") === "ok"){
+  window.location.replace("index.html");
+}
+
+function entrar(e){
+  e.preventDefault();
+  var u = document.getElementById("usuario").value.trim().toLowerCase();
+  var s = document.getElementById("senha").value;
+  var erro = document.getElementById("erro-msg");
+
+  var ok = USUARIOS.some(function(c){ return c.user === u && c.senha === s; });
+  if(ok){
+    sessionStorage.setItem("trevizo_auth","ok");
+    window.location.replace("index.html");
+  } else {
+    erro.classList.remove("visivel");
+    void erro.offsetWidth;
+    erro.classList.add("visivel");
+    document.getElementById("senha").value = "";
+    document.getElementById("senha").focus();
+  }
+}
+</script>
+</body>
+</html>
