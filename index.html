@@ -28,8 +28,24 @@
   .bloco-prod{position:relative;overflow:hidden;
     border-bottom:2px solid rgba(255,215,0,0.5);background:#021a5e;}
   .prod-img{position:absolute;inset:0;width:100%;height:100%;
-    object-fit:cover;transition:opacity 0.7s ease,transform 0.7s ease;}
-  .prod-img.saindo{opacity:0;transform:scale(1.07);}
+    object-fit:cover;transition:opacity 0.8s ease;transform-origin:center center;}
+  .prod-img.saindo{opacity:0;}
+
+  /* Ken Burns — 4 variações cinematicas */
+  @keyframes kb1{from{transform:scale(1)   translate(0%,0%);}  to{transform:scale(1.13) translate(-2%,-2%);}}
+  @keyframes kb2{from{transform:scale(1.08) translate(-2%,0%);} to{transform:scale(1)    translate(2%,-1%);}}
+  @keyframes kb3{from{transform:scale(1)   translate(2%,1%);}  to{transform:scale(1.11) translate(-1%,-2%);}}
+  @keyframes kb4{from{transform:scale(1.07) translate(0%,-2%);}to{transform:scale(1)    translate(0%,2%);}}
+  .prod-img.kb1{animation:kb1 9.5s ease-in-out forwards;}
+  .prod-img.kb2{animation:kb2 9.5s ease-in-out forwards;}
+  .prod-img.kb3{animation:kb3 9.5s ease-in-out forwards;}
+  .prod-img.kb4{animation:kb4 9.5s ease-in-out forwards;}
+
+  /* Brilho dourado suave que pulsa (clima de acougue premium) */
+  .prod-glow{position:absolute;inset:0;z-index:1;pointer-events:none;
+    background:radial-gradient(ellipse at 62% 38%,rgba(255,200,40,0.13) 0%,transparent 65%);
+    animation:glow-pulse 3.8s ease-in-out infinite;}
+  @keyframes glow-pulse{0%,100%{opacity:0.55;}50%{opacity:1;}}
   .prod-overlay{position:absolute;bottom:0;left:0;right:0;height:38%;
     background:linear-gradient(to top,rgba(2,26,94,0.88) 0%,transparent 100%);z-index:2;}
   .prod-badge{position:absolute;bottom:1rem;left:50%;transform:translateX(-50%);
@@ -43,7 +59,7 @@
   .bloco-marca::after{content:'';position:absolute;inset:0;
     background:linear-gradient(to top,rgba(2,26,94,0.92) 0%,rgba(2,26,94,0.5) 55%,rgba(2,26,94,0.1) 100%);
     z-index:2;}
-  .logo-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:1;}
+  .logo-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;z-index:1;background:#021a5e;}
   .marca-linha{position:absolute;top:0;left:10%;right:10%;height:1px;
     background:linear-gradient(90deg,transparent,var(--dourado),transparent);z-index:3;}
   .bloco-marca .slogan,.bloco-marca .loc,.bloco-marca .relogio,.bloco-marca .datatxt
@@ -70,8 +86,8 @@
 
   .col-titulo{text-align:center;margin-bottom:0.8rem;flex-shrink:0;
     padding-bottom:0.7rem;border-bottom:1px solid var(--b40);}
-  .col-titulo span{font-size:0.62rem;font-weight:800;letter-spacing:3px;
-    text-transform:uppercase;color:var(--dourado);}
+  .col-titulo span{font-size:1.35rem;font-weight:900;letter-spacing:3px;
+    text-transform:uppercase;color:var(--dourado);text-shadow:0 0 18px rgba(255,215,0,0.5);}
 
   .dest-hdr{display:flex;align-items:center;gap:1rem;
     background:rgba(255,255,255,0.13);border:2px solid #fff;border-radius:14px;
@@ -140,7 +156,8 @@
 <div class="painel">
   <div class="col-esq">
     <div class="bloco-prod">
-      <img id="prod-img" class="prod-img" src="images/frango.jpg" alt="Produto"/>
+      <img id="prod-img" class="prod-img kb1" src="images/frango.jpg" alt="Produto"/>
+      <div class="prod-glow"></div>
       <div class="prod-overlay"></div>
       <div id="prod-badge" class="prod-badge">FRANGO</div>
     </div>
@@ -229,8 +246,15 @@ function render(i){
   var p=P[i];
   var img=document.getElementById("prod-img");
   var badge=document.getElementById("prod-badge");
+  img.classList.remove("kb1","kb2","kb3","kb4");
   img.classList.add("saindo");
-  setTimeout(function(){img.src=p.img;img.classList.remove("saindo");badge.textContent=p.nome.toUpperCase();},700);
+  setTimeout(function(){
+    img.src=p.img;
+    void img.offsetWidth; // force reflow so animation restarts
+    img.classList.remove("saindo");
+    img.classList.add(["kb1","kb2","kb3","kb4"][i%4]);
+    badge.textContent=p.nome.toUpperCase();
+  },750);
   document.getElementById("dest-titulo").textContent=p.nome.toUpperCase();
   var dc=document.getElementById("dest-cortes");
   dc.innerHTML="";
