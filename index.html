@@ -10,8 +10,6 @@
     --azul:    #0D47C8;
     --azul-esc:#021a5e;
     --dourado: #FFD700;
-    --b:       #FFFFFF;
-    --b70:     rgba(255,255,255,0.7);
     --b40:     rgba(255,255,255,0.4);
     --b15:     rgba(255,255,255,0.15);
     --b08:     rgba(255,255,255,0.08);
@@ -29,14 +27,11 @@
 
   .bloco-prod{position:relative;overflow:hidden;
     border-bottom:2px solid rgba(255,215,0,0.5);background:#021a5e;}
-
   .prod-img{position:absolute;inset:0;width:100%;height:100%;
     object-fit:cover;transition:opacity 0.7s ease,transform 0.7s ease;}
   .prod-img.saindo{opacity:0;transform:scale(1.07);}
-
   .prod-overlay{position:absolute;bottom:0;left:0;right:0;height:38%;
     background:linear-gradient(to top,rgba(2,26,94,0.88) 0%,transparent 100%);z-index:2;}
-
   .prod-badge{position:absolute;bottom:1rem;left:50%;transform:translateX(-50%);
     background:var(--dourado);color:#000;font-size:1rem;font-weight:900;
     padding:0.5rem 2.2rem;border-radius:50px;letter-spacing:3px;text-transform:uppercase;
@@ -55,7 +50,7 @@
     {position:relative;z-index:3;}
   .slogan{font-size:0.65rem;color:var(--dourado);font-weight:800;letter-spacing:2px;
     text-transform:uppercase;text-align:center;}
-  .loc{font-size:0.68rem;color:var(--b70);text-align:center;font-weight:600;}
+  .loc{font-size:0.68rem;color:rgba(255,255,255,0.7);text-align:center;font-weight:600;}
   .relogio{font-size:2.4rem;font-weight:900;color:var(--dourado);letter-spacing:5px;
     text-shadow:0 0 24px rgba(255,215,0,0.6);line-height:1;}
   .datatxt{font-size:0.72rem;color:#fff;font-weight:700;text-align:center;text-transform:capitalize;}
@@ -101,15 +96,23 @@
 
   .divisor{display:flex;align-items:center;gap:0.7rem;margin:0.35rem 0;flex-shrink:0;}
   .div-l{flex:1;height:1px;background:var(--b40);}
-  .div-t{font-size:0.58rem;font-weight:800;color:var(--b70);
+  .div-t{font-size:0.58rem;font-weight:800;color:rgba(255,255,255,0.7);
     letter-spacing:2px;text-transform:uppercase;white-space:nowrap;}
 
-  .outros{display:flex;flex-direction:column;gap:0.28rem;overflow-y:auto;flex:1;}
-  .outros::-webkit-scrollbar{width:3px;}
-  .outros::-webkit-scrollbar-thumb{background:var(--b40);border-radius:3px;}
+  /* LISTA EM MOVIMENTO CONTINUO */
+  .outros-wrap{flex:1;overflow:hidden;position:relative;mask-image:linear-gradient(to bottom,transparent 0%,black 8%,black 92%,transparent 100%);-webkit-mask-image:linear-gradient(to bottom,transparent 0%,black 8%,black 92%,transparent 100%);}
+  .outros-track{display:flex;flex-direction:column;gap:0.28rem;
+    animation:scroll-up 30s linear infinite;}
+  .outros-track:hover{animation-play-state:paused;}
+
+  @keyframes scroll-up{
+    0%{transform:translateY(0);}
+    100%{transform:translateY(-50%);}
+  }
+
   .outro{display:flex;align-items:center;justify-content:space-between;
     padding:0.42rem 0.85rem;border-radius:10px;
-    border:1px solid var(--b40);background:var(--b08);gap:0.5rem;}
+    border:1px solid var(--b40);background:var(--b08);gap:0.5rem;flex-shrink:0;}
   .outro-info{flex:1;min-width:0;}
   .outro-cat{font-size:0.6rem;font-weight:800;color:var(--dourado);
     text-transform:uppercase;letter-spacing:1px;display:block;}
@@ -119,18 +122,17 @@
     background:var(--b15);padding:0.22rem 0.65rem;border-radius:6px;
     border:1px solid var(--b40);}
 
-  /* MARCA CRIADOR - canto inferior direito */
+  /* MARCA CRIADOR */
   .marca-criador{position:fixed;bottom:0.75rem;right:0.9rem;z-index:999;
-    display:flex;align-items:center;gap:0.35rem;opacity:0.6;
-    transition:opacity 0.2s;}
+    display:flex;align-items:center;gap:0.35rem;opacity:0.6;transition:opacity 0.2s;}
   .marca-criador:hover{opacity:1;}
   .marca-criador img{width:26px;height:26px;object-fit:contain;border-radius:4px;}
   .marca-criador span{font-size:0.5rem;font-weight:700;color:rgba(255,255,255,0.6);
     letter-spacing:0.8px;text-transform:uppercase;line-height:1.4;}
 
   @keyframes piscar{0%,100%{opacity:1;}50%{opacity:0.55;}}
-  @keyframes fade-in{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
-  .fi{animation:fade-in 0.4s ease forwards;}
+  @keyframes fi{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+  .fi{animation:fi 0.4s ease forwards;}
 </style>
 </head>
 <body>
@@ -138,7 +140,7 @@
 <div class="painel">
   <div class="col-esq">
     <div class="bloco-prod">
-      <img id="prod-img" class="prod-img" src="" alt="Produto"/>
+      <img id="prod-img" class="prod-img" src="images/frango.jpg" alt="Produto"/>
       <div class="prod-overlay"></div>
       <div id="prod-badge" class="prod-badge">FRANGO</div>
     </div>
@@ -167,11 +169,12 @@
       <div class="div-t">Outros cortes disponiveis</div>
       <div class="div-l"></div>
     </div>
-    <div class="outros" id="outros"></div>
+    <div class="outros-wrap">
+      <div class="outros-track" id="outros-track"></div>
+    </div>
   </div>
 </div>
 
-<!-- Logo criador do sistema - canto inferior direito -->
 <div class="marca-criador">
   <img src="images/marca-criador.jpg" alt="Redex Global" onerror="this.style.display='none'"/>
   <span>Sistema por<br/>Redex Global</span>
@@ -179,32 +182,49 @@
 
 <script>
 var P=[
-  {nome:"Frango",
-   img:"https://images.unsplash.com/photo-1604503468958-0db3b8b10523?w=1920&q=90&auto=format&fit=crop",
+  {nome:"Frango",          img:"images/frango.jpg",
    c:[{n:"Coxa e Sobrecoxa Temperada",p:"R$ 18,99/kg"},{n:"Coxinha Temperada",p:"R$ 26,99/kg"},
       {n:"File de Peito",p:"R$ 27,99/kg"},{n:"Meio Asa Temperado",p:"R$ 33,99/kg"}]},
-  {nome:"Carne de Primeira",
-   img:"https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=1920&q=90&auto=format&fit=crop",
+  {nome:"Carne de Primeira",img:"images/carne-primeira.jpg",
    c:[{n:"File Mignon",p:"R$ 59,99/kg"},{n:"Contrafile",p:"R$ 54,99/kg"},
       {n:"Alcatra",p:"R$ 53,99/kg"},{n:"Palominha",p:"R$ 42,99/kg"},{n:"Peixinho",p:"R$ 41,99/kg"}]},
-  {nome:"Carne de Segunda",
-   img:"https://images.unsplash.com/photo-1558030006-ced668df87f7?w=1920&q=90&auto=format&fit=crop",
+  {nome:"Carne de Segunda", img:"images/carne-segunda.jpg",
    c:[{n:"Coxao Mole",p:"R$ 45,99/kg"},{n:"Coxao Duro",p:"R$ 44,99/kg"},{n:"Acem",p:"R$ 32,99/kg"}]},
-  {nome:"Carne de Porco",
-   img:"https://images.unsplash.com/photo-1594226801341-41427b4e5c22?w=1920&q=90&auto=format&fit=crop",
+  {nome:"Carne de Porco",  img:"images/carne-porco.jpg",
    c:[{n:"Pernil Suino",p:"R$ 19,99/kg"},{n:"Lombo Suino",p:"R$ 26,99/kg"},{n:"Costelinha Suina",p:"R$ 29,99/kg"}]},
-  {nome:"Picanha",
-   img:"https://images.unsplash.com/photo-1529692236671-f1f6cf9683ba?w=1920&q=90&auto=format&fit=crop",
+  {nome:"Picanha",         img:"images/picanha.jpg",
    c:[{n:"Picanha Bovina",p:"R$ 79,99/kg"},{n:"Picanha Suina",p:"R$ 34,99/kg"}]},
-  {nome:"Costela",
-   img:"https://images.unsplash.com/photo-1544025162-052763338878?w=1920&q=90&auto=format&fit=crop",
+  {nome:"Costela",         img:"images/costela.jpg",
    c:[{n:"Costela Bovina",p:"R$ 34,99/kg"},{n:"Costela Minga",p:"R$ 29,99/kg"},{n:"Costela Ripa",p:"R$ 27,99/kg"}]},
-  {nome:"Linguica",
-   img:"https://images.unsplash.com/photo-1542528180-1c2803fa048c?w=1920&q=90&auto=format&fit=crop",
+  {nome:"Linguica",        img:"images/linguica.jpg",
    c:[{n:"Linguica Toscana",p:"R$ 24,99/kg"},{n:"Linguica Calabresa",p:"R$ 21,99/kg"},{n:"Linguica de Frango",p:"R$ 18,99/kg"}]}
 ];
 
 var idx=0;
+
+function buildOutros(i){
+  var track=document.getElementById("outros-track");
+  track.innerHTML="";
+  // Monta lista completa (exceto produto atual) e duplica para loop infinito
+  var items=[];
+  P.forEach(function(op,j){
+    if(j===i)return;
+    op.c.forEach(function(c){
+      items.push({cat:op.nome,n:c.n,p:c.p});
+    });
+  });
+  // Duplica para o scroll ser continuo sem pular
+  items.concat(items).forEach(function(item){
+    var el=document.createElement("div");
+    el.className="outro";
+    el.innerHTML='<div class="outro-info"><span class="outro-cat">'+item.cat+'</span><span class="outro-n">'+item.n+'</span></div><span class="outro-p">'+item.p+'</span>';
+    track.appendChild(el);
+  });
+  // Ajusta velocidade de acordo com quantidade de itens
+  var dur=Math.max(20, items.length*2.2);
+  track.style.animationDuration=dur+"s";
+}
+
 function render(i){
   var p=P[i];
   var img=document.getElementById("prod-img");
@@ -219,17 +239,9 @@ function render(i){
     el.innerHTML='<span class="corte-n">'+c.n+'</span><span class="corte-p">'+c.p+'</span>';
     dc.appendChild(el);
   });
-  var ol=document.getElementById("outros");
-  ol.innerHTML="";
-  P.forEach(function(op,j){
-    if(j===i)return;
-    op.c.forEach(function(c){
-      var el=document.createElement("div");el.className="outro fi";
-      el.innerHTML='<div class="outro-info"><span class="outro-cat">'+op.nome+'</span><span class="outro-n">'+c.n+'</span></div><span class="outro-p">'+c.p+'</span>';
-      ol.appendChild(el);
-    });
-  });
+  buildOutros(i);
 }
+
 function tick(){
   var a=new Date();
   document.getElementById("relogio").textContent=
@@ -239,6 +251,7 @@ function tick(){
   document.getElementById("datatxt").textContent=
     dias[a.getDay()]+", "+String(a.getDate()).padStart(2,"0")+" de "+meses[a.getMonth()]+". de "+a.getFullYear();
 }
+
 render(0);tick();
 setInterval(tick,1000);
 setInterval(function(){idx=(idx+1)%P.length;render(idx);},9000);
