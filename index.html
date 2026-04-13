@@ -176,20 +176,47 @@
     height: 100vh;
     overflow: hidden;
     padding: 1.4rem 1.6rem;
-    background: linear-gradient(180deg, #0d3a7a 0%, #0a2d66 50%, #071f4f 100%);
+    background: linear-gradient(160deg, #0d3a7a 0%, #0a2a6e 40%, #071f52 100%);
+    position: relative;
   }
+
+  /* Decorative white circles background */
+  .col-direita::before {
+    content: '';
+    position: absolute;
+    top: -80px; right: -80px;
+    width: 280px; height: 280px;
+    border-radius: 50%;
+    border: 40px solid rgba(255,255,255,0.04);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .col-direita::after {
+    content: '';
+    position: absolute;
+    bottom: -60px; left: -60px;
+    width: 220px; height: 220px;
+    border-radius: 50%;
+    border: 30px solid rgba(255,255,255,0.04);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .col-direita > * { position: relative; z-index: 1; }
 
   /* Cabecalho destaque */
   .destaque-header {
     display: flex;
     align-items: center;
     gap: 1rem;
-    background: var(--destaque-bg);
-    border: 2px solid var(--border-gold);
+    background: linear-gradient(135deg, rgba(255,215,0,0.2) 0%, rgba(255,215,0,0.08) 100%);
+    border: 2px solid var(--dourado);
     border-radius: 16px;
     padding: 1rem 1.4rem;
     margin-bottom: 0.9rem;
     flex-shrink: 0;
+    box-shadow: 0 4px 24px rgba(255,215,0,0.15), inset 0 1px 0 rgba(255,255,255,0.1);
   }
 
   .destaque-emoji { font-size: 2.4rem; line-height: 1; }
@@ -199,10 +226,11 @@
   .destaque-titulo {
     font-size: 1.5rem;
     font-weight: 900;
-    color: var(--dourado);
-    letter-spacing: 1px;
+    color: #FFFFFF;
+    letter-spacing: 2px;
     line-height: 1;
     text-transform: uppercase;
+    text-shadow: 0 2px 12px rgba(0,0,0,0.4);
   }
 
   .destaque-sub {
@@ -240,23 +268,29 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    background: rgba(255,255,255,0.05);
-    border-left: 3px solid var(--dourado);
-    border-radius: 0 10px 10px 0;
-    padding: 0.55rem 1rem;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-left: 4px solid #FFFFFF;
+    border-radius: 0 12px 12px 0;
+    padding: 0.6rem 1rem;
+    transition: background 0.2s;
   }
 
+  .corte-destaque:hover { background: rgba(255,255,255,0.13); }
+
   .corte-nome {
-    font-size: 0.85rem;
-    font-weight: 600;
-    color: var(--branco-soft);
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: #FFFFFF;
+    letter-spacing: 0.3px;
   }
 
   .corte-preco {
-    font-size: 1.05rem;
+    font-size: 1.15rem;
     font-weight: 900;
     color: var(--dourado);
     letter-spacing: 0.5px;
+    text-shadow: 0 0 12px rgba(255,215,0,0.4);
   }
 
   /* Divisor */
@@ -268,12 +302,12 @@
     flex-shrink: 0;
   }
 
-  .divisor-linha { flex: 1; height: 1px; background: var(--border-gold); }
+  .divisor-linha { flex: 1; height: 1px; background: rgba(255,255,255,0.3); }
 
   .divisor-texto {
     font-size: 0.6rem;
     font-weight: 800;
-    color: var(--branco-muted);
+    color: rgba(255,255,255,0.7);
     letter-spacing: 2px;
     text-transform: uppercase;
     white-space: nowrap;
@@ -297,9 +331,13 @@
     justify-content: space-between;
     padding: 0.45rem 0.8rem;
     border-radius: 10px;
-    border: 1px solid rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.18);
+    background: rgba(255,255,255,0.05);
     gap: 0.5rem;
+    transition: background 0.2s;
   }
+
+  .outro-item:hover { background: rgba(255,255,255,0.1); }
 
   .outro-esquerda {
     display: flex;
@@ -314,18 +352,18 @@
   .outro-info { min-width: 0; }
 
   .outro-categoria {
-    font-size: 0.65rem;
+    font-size: 0.62rem;
     font-weight: 800;
-    color: var(--azul-claro);
+    color: var(--dourado);
     text-transform: uppercase;
-    letter-spacing: 0.8px;
+    letter-spacing: 1px;
     display: block;
   }
 
   .outro-corte {
-    font-size: 0.8rem;
-    font-weight: 600;
-    color: var(--branco-soft);
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: #FFFFFF;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -333,10 +371,14 @@
   }
 
   .outro-preco {
-    font-size: 0.95rem;
+    font-size: 1rem;
     font-weight: 900;
-    color: var(--branco);
+    color: #FFFFFF;
     flex-shrink: 0;
+    background: rgba(255,255,255,0.12);
+    padding: 0.2rem 0.6rem;
+    border-radius: 6px;
+    border: 1px solid rgba(255,255,255,0.25);
   }
 
   /* ANIMACOES */
