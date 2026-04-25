@@ -111,8 +111,8 @@
   .corte{display:flex;align-items:center;justify-content:space-between;
     background:var(--b08);border:1px solid var(--b40);border-left:4px solid #fff;
     border-radius:0 10px 10px 0;padding:0.55rem 1rem;}
-  .corte-n{font-size:0.86rem;font-weight:700;color:#fff;}
-  .corte-p{font-size:1.1rem;font-weight:900;color:var(--dourado);
+  .corte-n{font-size:1.2rem;font-weight:700;color:#fff;}
+  .corte-p{font-size:1.5rem;font-weight:900;color:var(--dourado);
     text-shadow:0 0 12px rgba(255,215,0,0.4);}
 
   .divisor{display:flex;align-items:center;gap:0.7rem;margin:0.35rem 0;flex-shrink:0;}
@@ -135,11 +135,11 @@
     padding:0.42rem 0.85rem;border-radius:10px;
     border:1px solid var(--b40);background:var(--b08);gap:0.5rem;flex-shrink:0;}
   .outro-info{flex:1;min-width:0;}
-  .outro-cat{font-size:0.6rem;font-weight:800;color:var(--dourado);
+  .outro-cat{font-size:0.75rem;font-weight:800;color:var(--dourado);
     text-transform:uppercase;letter-spacing:1px;display:block;}
-  .outro-n{font-size:0.82rem;font-weight:700;color:#fff;
+  .outro-n{font-size:1.1rem;font-weight:700;color:#fff;
     white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block;}
-  .outro-p{font-size:0.95rem;font-weight:900;color:#fff;flex-shrink:0;
+  .outro-p{font-size:1.25rem;font-weight:900;color:#fff;flex-shrink:0;
     background:var(--b15);padding:0.22rem 0.65rem;border-radius:6px;
     border:1px solid var(--b40);}
 
@@ -288,7 +288,7 @@ function tick(){
 
 render(0);tick();
 setInterval(tick,1000);
-setInterval(function(){idx=(idx+1)%P.length;render(idx);},9000);
+setInterval(function(){idx=(idx+1)%P.length;render(idx);},15000);
 </script>
 </body>
 </html>
